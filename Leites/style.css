@@ -1,0 +1,142 @@
+:root {
+    --primary: #00ff41; /* Verde Hacker */
+    --secondary: #008f11;
+    --bg: #0d1117;
+    --panel: #161b22;
+    --text: #c9d1d9;
+    --danger: #ff4444;
+    --highlight: #58a6ff;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navegação */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--secondary);
+}
+
+nav a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 1.2em;
+    border: 1px solid var(--primary);
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+
+nav a:hover, nav a.active {
+    background: var(--primary);
+    color: black;
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* Cards de Resumo */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--panel);
+    padding: 15px;
+    border: 1px solid #30363d;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    color: var(--highlight);
+    margin-top: 5px;
+}
+
+/* Inputs */
+.control-panel {
+    background: var(--panel);
+    padding: 20px;
+    border: 1px solid var(--secondary);
+    margin-bottom: 30px;
+}
+
+.odds-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 colunas para 3 odds */
+    gap: 15px;
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border: 1px dashed #333;
+}
+
+.hero-area { border-bottom: 2px solid var(--highlight); }
+.bro-area { border-bottom: 2px solid var(--danger); }
+
+label { display: block; margin-bottom: 5px; font-size: 0.8em; opacity: 0.7;}
+input {
+    width: 90%;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    color: white;
+    padding: 8px;
+    font-family: inherit;
+}
+
+/* Botões de Ação */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    flex: 1;
+    padding: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    border: none;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+button:hover { opacity: 1; transform: scale(1.02); }
+
+.btn-hero { background: var(--highlight); color: black; }
+.btn-draw { background: #ffa500; color: black; } /* Laranja para empate */
+.btn-bro { background: var(--danger); color: white; }
+
+/* Tabela e Gráficos */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
+th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+th { color: var(--primary); }
+
+/* Estilo do Cofre */
+.vault-container {
+    text-align: center;
+    margin-top: 50px;
+}
+.big-lock { font-size: 100px; margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
+.vault-amount { font-size: 5em; color: var(--primary); text-shadow: 0 0 20px var(--secondary); margin: 20px 0; }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
