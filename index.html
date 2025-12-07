@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA V2 - DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="active">PAINEL OPERAÇÕES</a>
+        <a href="cofre.html">O COFRE</a>
+    </nav>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label>LUCRO SEMANA</label>
+                <div id="weeklyProfit" class="stat-value">€ 0.00</div>
+            </div>
+            <div class="stat-card">
+                <label>LUCRO MÊS</label>
+                <div id="monthlyProfit" class="stat-value">€ 0.00</div>
+            </div>
+            <div class="stat-card">
+                <label>NO COFRE (TOTAL)</label>
+                <div id="totalVaultMini" class="stat-value" style="color: var(--primary)">€ ...</div>
+            </div>
+        </div>
+
+        <div style="background: #161b22; padding: 10px; margin-bottom: 20px; border: 1px solid #333;">
+            <canvas id="profitChart" height="80"></canvas>
+        </div>
+
+        <div class="control-panel">
+            <h3>NOVA OPERAÇÃO DE ARBITRAGEM</h3>
+            <label>Investimento Total (€)</label>
+            <input type="number" id="investTotal" value="10" step="0.5">
+
+            <div class="odds-grid">
+                <div class="hero-area">
+                    <label style="color: var(--highlight)">TU (Time A)</label>
+                    <input type="number" id="oddHero" placeholder="Odd 1 (Ex: 2.10)">
+                </div>
+                <div class="bro-area">
+                    <label style="color: orange">IRMÃO (Empate)</label>
+                    <input type="number" id="oddDraw" placeholder="Odd X (Ex: 3.20)">
+                </div>
+                <div class="bro-area">
+                    <label style="color: var(--danger)">IRMÃO (Time B)</label>
+                    <input type="number" id="oddBroWin" placeholder="Odd 2 (Ex: 3.50)">
+                </div>
+            </div>
+
+            <label>RESULTADO FINAL DO JOGO:</label>
+            <div class="action-buttons">
+                <button class="btn-hero" onclick="registerWin('Heroi')">VITÓRIA MINHA (TIME A)</button>
+                <button class="btn-draw" onclick="registerWin('Irmao_Empate')">EMPATE (IRMÃO)</button>
+                <button class="btn-bro" onclick="registerWin('Irmao_VitoriaB')">VITÓRIA B (IRMÃO)</button>
+            </div>
+        </div>
+
+        <h3>REGISTO RECENTE</h3>
+        <table id="logsTable">
+            <thead>
+                <tr>
+                    <th>DATA</th>
+                    <th>VENCEDOR</th>
+                    <th>COFRE</th>
+                    <th>SEGURO</th>
+                    <th>LUCRO LÍQ.</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
