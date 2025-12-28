@@ -139,4 +139,76 @@ th { color: var(--primary); }
     0% { transform: translateY(0px); }
     50% { transform: translateY(-20px); }
     100% { transform: translateY(0px); }
+
+}
+
+/* --- NOVOS ESTILOS PARA AS CARTEIRAS NO COFRE --- */
+
+.wallets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 30px auto;
+    max-width: 800px;
+}
+
+.wallet-card {
+    background: rgba(22, 27, 34, 0.9);
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.wallet-card h4 {
+    margin: 0;
+    color: #888;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+}
+
+.hero-wallet { border-bottom: 2px solid var(--highlight); }
+.bro-wallet { border-bottom: 2px solid var(--danger); }
+
+.wallet-balance {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 10px 0 20px 0;
+    color: white;
+}
+
+.deposit-area {
+    display: flex;
+    gap: 10px;
+}
+
+.deposit-area input {
+    flex: 1;
+    background: #0d1117;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+    text-align: center;
+}
+
+.deposit-area button {
+    flex: 2;
+    background: var(--primary);
+    color: black;
+    font-size: 0.8em;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.deposit-area button:hover {
+    background: #00ff41;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+/* Ajuste Responsivo */
+@media (max-width: 600px) {
+    .wallets-grid {
+        grid-template-columns: 1fr;
+    }
 }
