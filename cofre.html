@@ -22,63 +22,153 @@
             CARREGANDO...
         </div>
 
-        <p style="opacity: 0.6; max-width: 600px; margin: 0 auto;">
-            Este fundo é intocável. Representa 20% de todos os lucros obtidos nas operações de arbitragem contra o sistema.
-            <br><br>
+        <div class="wallets-grid">
+            <div class="wallet-card hero-wallet">
+                <h4>MINHA CARTEIRA (LUCRO)</h4>
+                <div class="wallet-balance" id="walletHero">€ 0.00</div>
+                
+                <div class="deposit-area">
+                    <input type="number" id="inputHero" placeholder="Valor" step="0.5">
+                    <button onclick="depositar('Heroi')">ENVIAR P/ COFRE ➔</button>
+                </div>
+            </div>
+
+            <div class="wallet-card bro-wallet">
+                <h4>CARTEIRA IRMÃO (LUCRO)</h4>
+                <div class="wallet-balance" id="walletBro">€ 0.00</div>
+
+                <div class="deposit-area">
+                    <input type="number" id="inputBro" placeholder="Valor" step="0.5">
+                    <button onclick="depositar('Irmao')">ENVIAR P/ COFRE ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <p style="opacity: 0.6; max-width: 600px; margin: 30px auto;">
+            Este fundo é intocável. Representa 20% de todos os lucros + Contribuições voluntárias.
+            <br>
             OBJETIVO: <span style="color: var(--primary)">FALÊNCIA DO ALVO</span>
         </p>
 
         <div style="margin-top: 50px; border-top: 1px solid #333; padding-top: 20px;">
-            <h3>CONTRIBUIÇÕES RECENTES AO COFRE</h3>
+            <h3>ÚLTIMAS MOVIMENTAÇÕES</h3>
             <ul id="vaultLogs" style="list-style: none; padding: 0; color: var(--primary);">
-                </ul>
+            </ul>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO SUPABASE ---
-        // Substitui aqui pelas tuas chaves REAIS do projeto Supabase
-        const supabaseUrl = 'AQUI_A_TUA_URL_SUPABASE'; 
-        const supabaseKey = 'AQUI_A_TUA_CHAVE_ANON_PUBLIC';
+        // --- CONFIGURAÇÃO SUPABASE (AS MESMAS DO SCRIPT.JS) ---
+        const supabaseUrl = 'https://euxfddzviktggfwefxhf.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eGZkZHp2aWt0Z2dmd2VmeGhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxMTAwMzEsImV4cCI6MjA4MDY4NjAzMX0.oNfGbI8UaK9zUSLQkb5LfXRh8Ozhu-SNAeNaWYr7bS8';
 
-        // CORREÇÃO AQUI: Mudámos o nome para 'supabaseClient'
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Variáveis globais para validação
+        let saldoAtualHero = 0;
+        let saldoAtualBro = 0;
+
         async function loadVault() {
-            // Usamos 'supabaseClient' em vez de 'supabase'
+            // Selecionamos TUDO para poder calcular os saldos individuais
             const { data, error } = await supabaseClient
                 .from('historico_operacoes')
-                .select('valor_para_cofre, data_operacao')
+                .select('*') 
                 .order('data_operacao', { ascending: false });
 
             if (error) {
-                console.error("Erro ao carregar o cofre:", error);
-                document.getElementById('bigVaultDisplay').innerText = "ERRO CONEXÃO";
+                console.error("Erro ao carregar:", error);
+                document.getElementById('bigVaultDisplay').innerText = "ERRO";
                 return;
             }
 
-            let total = 0;
+            let totalCofre = 0;
+            let totalHero = 0;
+            let totalBro = 0;
+
             const list = document.getElementById('vaultLogs');
+            list.innerHTML = ''; // Limpa a lista antes de encher
 
             if (data) {
-                data.forEach(op => {
-                    total += parseFloat(op.valor_para_cofre);
-                    
-                    // Mostrar apenas os últimos 5 logs na lista
-                    if (list.children.length < 5) {
+                data.forEach((op, index) => {
+                    // 1. Soma Cofre
+                    totalCofre += parseFloat(op.valor_para_cofre);
+
+                    // 2. Soma Carteiras Individuais (Baseado no Lucro Líquido Vencedor)
+                    // Se eu depositei, o meu lucro líquido na DB é negativo, então subtrai automaticamente
+                    if (op.vencedor && op.vencedor.toUpperCase().includes('EU')) {
+                        totalHero += parseFloat(op.lucro_liquido_vencedor || 0);
+                    } 
+                    else if (op.vencedor && op.vencedor.toUpperCase().includes('IRMÃO')) {
+                        totalBro += parseFloat(op.lucro_liquido_vencedor || 0);
+                    }
+
+                    // Logs (Top 5)
+                    if (index < 5) {
                         const li = document.createElement('li');
-                        // Formatação da data para PT-PT
-                        const dataFormatada = new Date(op.data_operacao).toLocaleDateString('pt-PT');
-                        li.innerHTML = `+ € ${parseFloat(op.valor_para_cofre).toFixed(2)} <small>(${dataFormatada})</small>`;
+                        const dataF = new Date(op.data_operacao).toLocaleDateString('pt-PT');
+                        const val = parseFloat(op.valor_para_cofre);
+                        const isPos = val >= 0;
+                        
+                        li.innerHTML = `
+                            <span style="color: ${isPos ? 'var(--primary)' : 'red'}">
+                                ${isPos ? '+' : ''} € ${val.toFixed(2)}
+                            </span> 
+                            <small style="color: #666">(${op.nome_jogo || 'Operação'} - ${dataF})</small>`;
                         list.appendChild(li);
                     }
                 });
             }
-            // Atualiza o valor grande no centro
-            document.getElementById('bigVaultDisplay').innerText = `€ ${total.toFixed(2)}`;
+
+            // Atualiza UI
+            document.getElementById('bigVaultDisplay').innerText = `€ ${totalCofre.toFixed(2)}`;
+            
+            saldoAtualHero = totalHero;
+            document.getElementById('walletHero').innerText = `€ ${totalHero.toFixed(2)}`;
+
+            saldoAtualBro = totalBro;
+            document.getElementById('walletBro').innerText = `€ ${totalBro.toFixed(2)}`;
         }
 
-        // Inicia a função ao carregar a página
+        // --- FUNÇÃO PARA DEPOSITAR DINHEIRO DAS CARTEIRAS ---
+        async function depositar(quem) {
+            let inputId = quem === 'Heroi' ? 'inputHero' : 'inputBro';
+            let valor = parseFloat(document.getElementById(inputId).value);
+            let saldoDisponivel = quem === 'Heroi' ? saldoAtualHero : saldoAtualBro;
+            let nomeVencedor = quem === 'Heroi' ? "EU (Aporte Manual)" : "IRMÃO (Aporte Manual)";
+
+            // Validações
+            if (!valor || valor <= 0) {
+                alert("Mano, digita um valor válido.");
+                return;
+            }
+            if (valor > saldoDisponivel) {
+                alert(`Saldo insuficiente! Só tens €${saldoDisponivel.toFixed(2)}.`);
+                return;
+            }
+
+            // Inserir transação
+            // valor_para_cofre: POSITIVO (Entra no cofre)
+            // lucro_liquido_vencedor: NEGATIVO (Sai da carteira da pessoa)
+            const { error } = await supabaseClient.from('historico_operacoes').insert([{
+                nome_jogo: "CONTRIBUIÇÃO VOLUNTÁRIA",
+                investimento_total: 0,
+                vencedor: nomeVencedor,
+                lucro_bruto: 0,
+                valor_para_cofre: valor,
+                valor_solidariedade: 0,
+                lucro_liquido_vencedor: -valor 
+            }]);
+
+            if (error) {
+                console.error(error);
+                alert("Erro ao depositar.");
+            } else {
+                // Sucesso
+                document.getElementById(inputId).value = "";
+                loadVault(); // Recarrega tudo
+            }
+        }
+
         loadVault();
     </script>
 </body>
